@@ -1,0 +1,277 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+int Fcfs();
+int Priority_Scheduling();
+int Round_Robin();
+int Shortest_JobFirst();
+
+int main()
+{
+	int ch;
+	int Avg1,Avg2,Avg3,Avg4;
+	do
+	{
+		printf("-----MENU FOR CHOICE OF PROCESS SCHEDULING-----\n");
+		printf("1. FIRST COME FIRST SERVE\n");
+		printf("2. PRIORITY SCHEDULING\n");
+		printf("3. SHORTEST JOB FIRST\n");
+		printf("4. ROBIN ROUND SCHEDULING\n");
+		printf("5. EXIT\n");
+		printf("Enter your choice:");
+		scanf("%d",&ch);
+		switch(ch)
+		{
+			case 1:
+				Avg1=Fcfs();
+				break;
+			case 2:
+				Avg2=Priority_Scheduling();
+				break;
+			case 3:
+				Avg3=Shortest_JobFirst();
+				break;
+			case 4:
+				Avg4=Round_Robin();
+				break;
+			case 5:
+				exit(0);
+			default:
+				printf("Enter valid choice:");
+		}
+	}while(ch!=5);
+	return 0;
+}
+
+int Fcfs()
+{
+	int i,n,total_wait_time=0,total_tat=0;
+	char proc_name[10][15];
+	int BT[10],WT[10],TAT[10];
+	float avg_waittime,avg_tat;
+	printf("Enter No. Of Processes:");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		printf("Enter Process Name:\n");
+		scanf("%s",proc_name[i]);
+		printf("Enter The Burst Time Of Process %d:\n",(i+1));
+		scanf("%d",&BT[i]);
+	}
+	for(i=0;i<n;i++)
+	{
+		if(i==0)
+		{
+			WT[0]=0;
+			printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+		else
+		{
+			WT[i]=WT[i-1]+BT[i-1];
+		    total_wait_time+=WT[i];
+		    printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+	}
+	for(i=0;i<n;i++)
+	{
+		TAT[i]=WT[i]+BT[i];
+		total_tat+=TAT[i];
+		printf("Turn Around Time Of Process %s=%d:\n",proc_name[i],TAT[i]);
+	}
+	avg_waittime=((float)total_wait_time)/n;
+	printf("Total Waiting Time Of Processes=%d\n",total_wait_time);
+	printf("Average Waiting Time=%d\n",avg_waittime);
+	avg_tat=((float)total_tat)/n;
+	printf("Total Turn Around Time of Processes=%d\n",total_tat);
+	printf("Average Turn Around Time=%d\n",avg_tat);
+	return avg_waittime;
+}
+
+int Priority_Scheduling()
+{
+	int i,j,n,pos,temp,total_wait_time=0,total_tat=0;
+	char proc_name[5][15];
+	int BT[5],WT[5],PR[5],TAT[5];
+	float avg_waittime,avg_tat;
+	printf("Enter No Of Processes:");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		printf("Enter Process Name:\n");
+		scanf("%s",proc_name[i]);
+		printf("Enter The Burst Time Of Process %d:\n",(i+1));
+		scanf("%d",&BT[i]);
+		printf("Enter The Priority Of Process %d:\n",(i+1));
+		scanf("%d",&PR[i]);
+	}
+	for(i=0;i<n;i++)
+	{
+		pos=i;
+		for(j=i+1;j<n;j++)
+		{
+			if(PR[j]<PR[pos])
+			{
+				pos=j;
+			}
+		}
+		//sorting priority
+		temp=PR[i];
+		PR[i]=PR[pos];
+		PR[pos]=temp;
+		//sorting burst time
+		temp=BT[i];
+		BT[i]=BT[pos];
+		BT[pos]=temp;
+	}
+	for(i=0;i<n;i++)
+	{
+		printf("The Sorted Priority of Process %d=%d\n",(i+1),PR[i]);
+		printf("The Sorted Burst time of Process %d=%d\n",(i+1),BT[i]);
+	}
+	for(i=0;i<n;i++)
+	{
+		if(i==0)
+		{
+			WT[0]=0;
+			printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+		else
+		{
+			WT[i]=WT[i-1]+BT[i-1];
+		    total_wait_time+=WT[i];
+		    printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+	}
+	for(i=0;i<n;i++)
+	{
+		TAT[i]=WT[i]+BT[i];
+		total_tat+=TAT[i];
+		printf("Turn Around Time Of Process %s=%d:\n",proc_name[i],TAT[i]);
+	}
+	avg_waittime=((float)total_wait_time)/n;
+	printf("Total Waiting Time Of Processes=%d\n",total_wait_time);
+	printf("Average Waiting Time=%d\n",avg_waittime);
+	avg_tat=((float)total_tat)/n;
+	printf("Total Turn Around Time of Processes=%d\n",total_tat);
+	printf("Average Turn Around Time=%d\n",avg_tat);
+	return avg_waittime;
+}
+
+int Shortest_JobFirst()
+{
+	int i,j,n,pos,temp,total_wait_time=0,total_tat=0;
+	char proc_name[5][15];
+	int BT[5],WT[5],TAT[5];
+	float avg_waittime,avg_tat;
+	printf("Enter No Of Processes:");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		printf("Enter Process Name:\n");
+		scanf("%s",proc_name[i]);
+		printf("Enter The Burst Time Of Process %d:\n",(i+1));
+		scanf("%d",&BT[i]);
+	}
+	for(i=0;i<n;i++)
+	{
+		for(j=i+1;j<n;j++)
+		{
+			if(BT[j]<BT[i])
+			{
+				//sorting burst time
+			    temp=BT[i];
+		        BT[i]=BT[j];
+		        BT[j]=temp;
+			}
+		}
+	}
+	for(i=0;i<n;i++)
+	{
+		printf("The Sorted Burst time of Process %d=%d\n",(i+1),BT[i]);
+	}
+	for(i=0;i<n;i++)
+	{
+		if(i==0)
+		{
+			WT[0]=0;
+			printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+		else
+		{
+			WT[i]=WT[i-1]+BT[i-1];
+		    total_wait_time+=WT[i];
+		    printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);
+		}
+	}
+	for(i=0;i<n;i++)
+	{
+		TAT[i]=WT[i]+BT[i];
+		total_tat+=TAT[i];
+		printf("Turn Around Time Of Process %s=%d:\n",proc_name[i],TAT[i]);
+	}
+	avg_waittime=((float)total_wait_time)/n;
+	printf("Total Waiting Time Of Processes=%d\n",total_wait_time);
+	printf("Average Waiting Time=%d\n",avg_waittime);
+	avg_tat=((float)total_tat)/n;
+	printf("Total Turn Around Time of Processes=%d\n",total_tat);
+	printf("Average Turn Around Time=%d\n",avg_tat);
+	return avg_waittime;
+}
+
+int Round_Robin()
+{
+	int i,j,n,count=0,flag=0,time_quan,time,total_wt=0,total_tat=0;
+	int AT[10],BT[10],WT[10],TAT[10],temp[10];
+	char proc_name[5][15];
+	float avg_waittime,avg_tat;
+	printf("Enter No Of Processes:");
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+	{
+		printf("Enter Process Name:\n");
+		scanf("%s",proc_name[i]);
+		printf("Enter The Arrival Time of Process %d:\n",(i+1));
+		scanf("%d",&AT[i]);
+		printf("Enter The Burst Time Of Process %d:\n",(i+1));
+		scanf("%d",&BT[i]);
+		temp[i]=BT[i];
+    }
+    printf("Enter Time_Quantum Of Processes\n");
+    scanf("%d",&time_quan);
+    for(i=0;n!=0;i++)
+    {
+    	if(temp[i]<=time_quan && temp[i]>0)
+    	{
+    		time+=temp[i];//storing the burst time of process in time.
+    		temp[i]=0;//making the burst time of that process 0.
+    		flag=1;
+		}
+		else if(temp[i]>0)
+		{
+			temp[i]-=time_quan;//calculating the remaining time left for the process.
+			time+=time_quan;
+		}
+		if(temp[i]==0 && flag==1)
+		{
+			WT[i]+=time-AT[i]-BT[i];
+			printf("Waiting Time Of Process %s=%d:\n",proc_name[i],WT[i]);			
+			TAT[i]+=time-AT[i];
+			printf("Turn Around Time Of Process %s=%d:\n",proc_name[i],TAT[i]);
+			flag=0;
+			total_wt+=WT[i];
+			total_tat+=TAT[i];
+		}
+		if(i==n-1)
+		i=0;
+		else if(AT[i+1]<=time)//if other processes arrive during the execution of one process
+		i++;
+		else
+		i=0;
+	}
+	avg_waittime=(total_wt*1.0)/n;
+	avg_tat=(total_tat*1.0)/n;
+	printf("Total Waiting Time Of Processes=%d\n",total_wt);
+	printf("Average Waiting Time=%d\n",avg_waittime);
+	printf("Total Turn Around Time of Processes=%d\n",total_tat);
+	printf("Average Turn Around Time=%d\n",avg_tat);
+}
